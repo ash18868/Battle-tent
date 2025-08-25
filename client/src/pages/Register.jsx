@@ -1,12 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { registerUser } from '../features/authSlice'
 import { TextField, Button, Typography, Box } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 
 
 export default function Register() {
     const dispatch = useDispatch()
-    const { status, error } = useSelector(s => s.auth) // pulls {status, error} out of state.auth
+    const navigate = useNavigate()
+    const { user, status, error } = useSelector(s => s.auth) // pulls {status, error} out of state.auth
     const [form, setForm] = useState({ username: '', email: '', password: '' }) // creates local form state and its setter
 
 
@@ -15,7 +17,11 @@ export default function Register() {
         dispatch(registerUser(form))
     }
 
-
+    useEffect(() => {
+        if(status === 'succeeded' && user) // checks that status is succeeded as well
+            navigate('/', { replace: true }) 
+    }, [status, user, navigate])
+    
     return (
         <Box component="form" onSubmit={onSubmit} sx={{ display: 'grid', gap: 2 }}>
             <Typography variant="h4">Create an account</Typography>

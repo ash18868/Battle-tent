@@ -1,12 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginUser } from '../features/authSlice'
 import { TextField, Button, Typography, Box } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 
 
 export default function Login() {
     const dispatch = useDispatch()
-    const { status, error } = useSelector(s => s.auth)
+    const navigate = useNavigate()
+    const { user, status, error } = useSelector(s => s.auth)
     const [form, setForm] = useState({ emailOrUsername: '', password: '' })
 
 
@@ -14,6 +16,11 @@ export default function Login() {
         e.preventDefault()
         dispatch(loginUser(form))
     }
+
+    useEffect(() => {
+        if(user)
+            navigate('/', { replace: true }) // {replace: true} removes /login from backstack so user can't go back to login by pressing back arrow
+    }, [user, navigate])
 
 
     return (
